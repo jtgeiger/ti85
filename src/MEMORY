@@ -1,0 +1,145 @@
+ClLCD
+{64,1}->dim AA
+Outpt(3,6,"MEMORY 2000")
+Outpt(8,8,"Shuffling...")
+For(I,1,32)
+I->AA(I,1)
+End
+For(I,1,32)
+I->AA(I+32,1)
+End
+0->I
+{8,8}->dim GR
+For(ROW,1,8)
+For(COL,0,7)
+If 64-I==9
+Outpt(8,21," ")
+Outpt(8,20,64-I)
+iPart (rand*(64-I))+1->A
+AA(A,1)->GR(ROW,COL+1)
+rSwap(AA,A,64-I)->AA
+I+1->I
+End
+End
+{1}->AA
+Lbl B
+0->FF
+0->DA:0->DP:0->DM
+ClLCD
+For(ROW,1,8)
+For(COL,0,7)
+Outpt(ROW,1+2*COL,"-")
+End
+End
+1->ROW
+1->COL
+0->CR
+0->CC
+0->FFF
+Outpt(1,1,"*")
+Outpt(2,18,"1,1")
+Lbl A
+If FFF==32:Goto E
+getKy->A
+DA+1->DA
+If A==0:Goto A
+If A==22:Goto E
+DP+1->DP
+If A==21:Goto C
+If GR(ROW,COL)==0
+Then
+Outpt(ROW,COL*2-1," ")
+Else
+If CR!=ROW or CC!=COL
+Outpt(ROW,COL*2-1,"-")
+End
+Lbl D
+If A==24:COL-1->COL
+If A==25:ROW-1->ROW
+If A==26:COL+1->COL
+If A==34:ROW+1->ROW
+If ROW<1:8->ROW
+If ROW>8:1->ROW
+If COL<1:8->COL
+If COL>8:1->COL
+If ROW==CR and COL==CC
+Goto D
+Outpt(2,18,ROW)
+Outpt(2,19,",")
+Outpt(2,20,COL)
+Outpt(ROW,COL*2-1,"*")
+Goto A
+Lbl C
+If GR(ROW,COL)==0:Goto A
+If ROW==CR and COL==CC:Goto A
+If GR(ROW,COL)==1:"^"->C
+If GR(ROW,COL)==2:"E"->C
+If GR(ROW,COL)==3:"("->C
+If GR(ROW,COL)==4:")"->C
+If GR(ROW,COL)==5:"/"->C
+If GR(ROW,COL)==6:"Squared"->C
+If GR(ROW,COL)==7:","->C
+If GR(ROW,COL)==8:"{"->C
+If GR(ROW,COL)==9:"Pi"->C
+If GR(ROW,COL)==10:"-1"->C
+If GR(ROW,COL)==11:"["->C
+If GR(ROW,COL)==12:"]"->C
+If GR(ROW,COL)==13:"Sqrt"->C
+If GR(ROW,COL)==14:"Angle"->C
+If GR(ROW,COL)==15:":"->C
+If GR(ROW,COL)==16:"Beta"->C
+If GR(ROW,COL)==17:"squiggle Y"->C
+If GR(ROW,COL)==18:"Delta"->C
+If GR(ROW,COL)==19:"squiggle music"->C
+If GR(ROW,COL)==20:"Epsilon"->C
+If GR(ROW,COL)==21:"Theta"->C
+If GR(ROW,COL)==22:"?"->C
+If GR(ROW,COL)==23:"#"->C
+If GR(ROW,COL)==24:"&"->C
+If GR(ROW,COL)==25:"%"->C
+If GR(ROW,COL)==26:"'"->C
+If GR(ROW,COL)==27:"!"->C
+If GR(ROW,COL)==28:"@"->C
+If GR(ROW,COL)==29:"$"->C
+If GR(ROW,COL)==30:"~"->C
+If GR(ROW,COL)==31:"upsidedown ?"->C
+If GR(ROW,COL)==32:"Alpha"->C
+Outpt(ROW,COL*2-1,C)
+If FF==1
+Then
+If GR(ROW,COL)==GR(CR,CC)
+Then
+Outpt(5,17,"MATCH")
+For(I,1,250):End
+0->GR(ROW,COL)
+0->GR(CR,CC)
+Outpt(ROW,COL*2-1," ")
+Outpt(CR,CC*2-1," ")
+FFF+1->FFF
+Outpt(7,19,FFF)
+0->FF:0->CR:0->CC
+Outpt(5,17,"     ")
+Else
+For(I,1,250):End
+Outpt(ROW,COL*2-1,"*")
+Outpt(CR,CC*2-1,"-")
+DM+1->DM
+0->CR:0->CC:0->FF
+End
+Else
+Outpt(ROW,COL*2-1,C)
+1->FF
+ROW->CR
+COL->CC
+End
+Goto A
+Lbl E
+ClLCD
+Outpt(1,1,"Timer:")
+Outpt(1,14,DA)
+Outpt(2,1,"Keystrokes:")
+Outpt(2,14,DP)
+Outpt(3,1,"Bad matches:")
+Outpt(3,14,DM)
+Outpt(5,1,"Score:")
+Outpt(5,14,1000-(DA+DP)/32)
